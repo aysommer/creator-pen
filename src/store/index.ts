@@ -1,1 +1,1 @@
-export { default as StoryStore } from "./StoryStore";
+export { default as useStoriesStore } from "./StoriesStore";

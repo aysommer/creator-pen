@@ -1,47 +1,28 @@
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { RichTextEditor as MantineRichTextEditor } from "@mantine/tiptap";
+import { Link } from "react-router-dom";
+import { Box, Button, Flex } from "@mantine/core";
+import { EditorPanel } from "../components/editorPanel";
+import { ChaptersList } from "../components/chaptersList";
 
 import "@mantine/tiptap/styles.css";
-import { Link } from "react-router-dom";
-import { Button } from "@mantine/core";
 
-interface RichTextEditorProps {
-   value: string;
-   onChange: (value: string) => void;
-}
-
-export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
-   const editor = useEditor({
-      extensions: [StarterKit],
-      content: value,
-      onUpdate: ({ editor }) => {
-         onChange(editor.getHTML());
-      },
-   });
-
-   return (
-      <MantineRichTextEditor editor={editor}>
-         <MantineRichTextEditor.Toolbar>
-            <MantineRichTextEditor.ControlsGroup>
-               <MantineRichTextEditor.Bold />
-               <MantineRichTextEditor.Italic />
-            </MantineRichTextEditor.ControlsGroup>
-         </MantineRichTextEditor.Toolbar>
-
-         <MantineRichTextEditor.Content />
-      </MantineRichTextEditor>
-   );
-}
+const FAKE_CHAPTERS = [{ id: crypto.randomUUID(), num: 1, content: "" }];
 
 const StoryPage: React.FC = () => {
    return (
-      <div>
+      <Box p={4}>
          <Button component={Link} to="/">
             To home
          </Button>
-         <RichTextEditor />
-      </div>
+
+         <Flex>
+            <Box w="300px">
+               <ChaptersList items={FAKE_CHAPTERS} />
+            </Box>
+            <Box flex="1 1 auto">
+               <EditorPanel />
+            </Box>
+         </Flex>
+      </Box>
    );
 };
 
