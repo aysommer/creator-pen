@@ -1,28 +1,45 @@
-import { Link } from "react-router-dom";
-import { Box, Button, Flex } from "@mantine/core";
+import { useParams } from "react-router-dom";
+import { Box, Flex, Stack, Text, Button } from "@mantine/core";
 import { EditorPanel } from "../components/editorPanel";
 import { ChaptersList } from "../components/chaptersList";
+import { useStoriesStore } from "../store";
+import { NEW_STORY_KEY } from "../consts";
 
 import "@mantine/tiptap/styles.css";
 
-const FAKE_CHAPTERS = [{ id: crypto.randomUUID(), num: 1, content: "" }];
-
 const StoryPage: React.FC = () => {
-   return (
-      <Box p={4}>
-         <Button component={Link} to="/">
-            To home
-         </Button>
+   const params = useParams();
+   const isNew = params.id === NEW_STORY_KEY;
+   const story = useStoriesStore(
+      (state) =>
+         state.items.filter((item) => {
+            const comparisonKey = isNew ? NEW_STORY_KEY : params.id;
+            return item.id === comparisonKey;
+         })[0]
+   );
+   const addChapter = useStoriesStore((state) => state.addChapter);
 
-         <Flex>
-            <Box w="300px">
-               <ChaptersList items={FAKE_CHAPTERS} />
+   const onAddChapter = () => {
+      addChapter(story.id);
+   };
+
+   return (
+      <Flex>
+         <Stack w={300}>
+            <Box p={8}>
+               <Button radius="xl" onClick={onAddChapter}>
+                  Create chapter
+               </Button>
             </Box>
-            <Box flex="1 1 auto">
-               <EditorPanel />
-            </Box>
-         </Flex>
-      </Box>
+            <Text size="l" fw={700}>
+               Chapters
+            </Text>
+            <Box>{story?.chapters.length > 0 ? <ChaptersList items={story.chapters} /> : <Text>No chapters</Text>}</Box>
+         </Stack>
+         <Box flex="1 1 auto" p={4}>
+            {story?.selectedChapter ? <EditorPanel /> : null}
+         </Box>
+      </Flex>
    );
 };
 

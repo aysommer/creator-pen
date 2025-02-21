@@ -1,0 +1,1 @@
+export const NEW_STORY_KEY = 'new';

@@ -1,5 +1,6 @@
 import type { ChapterType, StoryType } from "../types";
 import { create } from "zustand";
+import { NEW_STORY_KEY } from "../consts";
 
 type StoriesStore = {
    items: StoryType[];
@@ -9,13 +10,15 @@ type StoriesStore = {
 
 function getNewStory(): StoryType {
    return {
-      id: crypto.randomUUID(),
-      name: "",
+      id: NEW_STORY_KEY,
+      name: "New story",
+      description: "",
       chapters: [],
+      selectedChapter: null,
    };
 }
 
-function getNewChapter(num: number): ChapterType {
+function getNewChapter(num: number = 1): ChapterType {
    return {
       id: crypto.randomUUID(),
       num,
@@ -27,6 +30,11 @@ const useStore = create<StoriesStore>((set) => ({
    items: [],
    addStory() {
       return set((state) => {
+         const hasNewStory = state.items.some((item) => item.id === NEW_STORY_KEY);
+         if (hasNewStory) {
+            return state;
+         }
+
          const newStory = getNewStory();
          return {
             ...state,
@@ -40,7 +48,7 @@ const useStore = create<StoriesStore>((set) => ({
             ...state,
             items: state.items.map((story) => {
                if (story.id === storyId) {
-                  const newChapter = getNewChapter(story.chapters.length);
+                  const newChapter = getNewChapter(story.chapters.length + 1);
                   return {
                      ...story,
                      chapters: [...story.chapters, newChapter],

@@ -1,13 +1,33 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Box, Button } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Divider, Stack, Text } from "@mantine/core";
+import { useStoriesStore } from "../store";
+import { StoriesList } from "../components/storiesList";
 
 const HomePage: React.FC = () => {
+   const navigate = useNavigate();
+   const stories = useStoriesStore((state) => state.items);
+   const addStory = useStoriesStore((state) => state.addStory);
+
+   const onAddStory = () => {
+      addStory();
+      navigate("/story/new");
+   };
+
    return (
-      <Box p={4}>
-         <Button component={Link} to="/story">
-            Create story
-         </Button>
+      <Box>
+         <Box p={8}>
+            <Button onClick={onAddStory} radius="xl">
+               Create story
+            </Button>
+         </Box>
+
+         <Stack w={300}>
+            <Text size="l" fw={700}>
+               Stories
+            </Text>
+            <Box>{stories.length > 0 ? <StoriesList items={stories} /> : <Text>No stories</Text>}</Box>
+         </Stack>
       </Box>
    );
 };
