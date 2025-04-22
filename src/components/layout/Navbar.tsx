@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Flex, Button, MantineStyleProp } from "@mantine/core";
 
 const navBarStyles: MantineStyleProp = {
-   borderBottom: "1px solid #999",
    boxSizing: "border-box",
 };
 

@@ -5,6 +5,7 @@ import { NEW_STORY_KEY } from "../consts";
 type StoriesStore = {
    items: StoryType[];
    addStory(): void;
+   changeStory(data: StoryType): void;
    addChapter(storyId: StoryType["id"]): void;
 };
 
@@ -28,6 +29,23 @@ function getNewChapter(num: number = 1): ChapterType {
 
 const useStore = create<StoriesStore>((set) => ({
    items: [],
+   changeStory(data) {
+      return set((state) => {
+         const items = state.items.map((item) => {
+            return data.id === item.id
+               ? {
+                    ...item,
+                    ...data,
+                 }
+               : item;
+         });
+
+         return {
+            ...state,
+            items,
+         };
+      });
+   },
    addStory() {
       return set((state) => {
          const hasNewStory = state.items.some((item) => item.id === NEW_STORY_KEY);

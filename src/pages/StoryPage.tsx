@@ -1,5 +1,6 @@
+import { ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Flex, Stack, Text, Button } from "@mantine/core";
+import { Box, Flex, Stack, Text, Button, TextInput } from "@mantine/core";
 import { EditorPanel } from "../components/editorPanel";
 import { ChaptersList } from "../components/chaptersList";
 import { useStoriesStore } from "../store";
@@ -17,7 +18,15 @@ const StoryPage: React.FC = () => {
             return item.id === comparisonKey;
          })[0]
    );
+   const changeStory = useStoriesStore((state) => state.changeStory);
    const addChapter = useStoriesStore((state) => state.addChapter);
+
+   const onStoryNameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+      changeStory({
+         ...story,
+         name: target.value,
+      });
+   };
 
    const onAddChapter = () => {
       addChapter(story.id);
@@ -25,20 +34,29 @@ const StoryPage: React.FC = () => {
 
    return (
       <Flex>
-         <Stack w={300}>
-            <Box p={8}>
-               <Button radius="xl" onClick={onAddChapter}>
-                  Create chapter
-               </Button>
-            </Box>
-            <Text size="l" fw={700}>
-               Chapters
-            </Text>
-            <Box>{story?.chapters.length > 0 ? <ChaptersList items={story.chapters} /> : <Text>No chapters</Text>}</Box>
-         </Stack>
-         <Box flex="1 1 auto" p={4}>
-            {story?.selectedChapter ? <EditorPanel /> : null}
-         </Box>
+         {story ? (
+            <>
+               <Stack w={300} gap={4}>
+                  <TextInput value={story.name} onChange={onStoryNameChange} variant="filled" placeholder="Enter story name" />
+                  <Box>
+                     <Button radius="xl" onClick={onAddChapter}>
+                        Create chapter
+                     </Button>
+                  </Box>
+                  <Text size="l" fw={700}>
+                     Chapters
+                  </Text>
+                  <Box>
+                     {story?.chapters.length > 0 ? <ChaptersList items={story.chapters} /> : <Text>No chapters</Text>}
+                  </Box>
+               </Stack>
+               <Box flex="1 1 auto" p={4}>
+                  {story?.selectedChapter ? <EditorPanel /> : null}
+               </Box>
+            </>
+         ) : (
+            <Text>Oops...</Text>
+         )}
       </Flex>
    );
 };
